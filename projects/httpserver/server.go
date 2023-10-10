@@ -5,7 +5,7 @@ import (
 )
 
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "index.html")
+	http.ServeFile(w, r, "/home/fatabbas/ascii-art-web/projects/httpserver/index.html")
 }
 
 func main() {

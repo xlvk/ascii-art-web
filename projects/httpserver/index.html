@@ -5,233 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- <link rel="stylesheet" type="text/css" href="style.css" /> -->
+  <link type="text/css" rel="stylesheet" href="css/style.css" />
   <title>WEB ART</title>
 </head>
 
 <body>
-  <style>
-    @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@100&display=swap");
-
-    body,
-    html {
-      margin: 0;
-    }
-
-    body {
-      background-color: #111;
-    }
-
-    body::-webkit-scrollbar {
-      display: none;
-    }
-
-    header {
-      height: 30vh;
-      width: 100vw;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #111;
-    }
-
-    .gtitle {
-      font-size: 3.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 30vh;
-      width: 100vw;
-      font-family: "IBM Plex Mono", monospace, sans-serif;
-      background: linear-gradient(to right,
-          #ee7a7a 20%,
-          rgb(255, 152, 169) 40%,
-          purple 60%,
-          #e72a2a 80%);
-      background-size: 50vh 50vh;
-      color: #000;
-      background-clip: text;
-      animation: tshine 0.5s linear infinite;
-
-      @keyframes tshine {
-        to {
-          background-position: 80% center;
-        }
-      }
-
-      text-fill-color: transparent;
-      -webkit-text-fill-color: transparent;
-      -webkit-background-clip: text;
-    }
-
-    .radio-input {
-      display: flex;
-      flex-direction: row;
-      font-family: 'IBM Plex Mono', monospace, sans-serif;
-      font-size: 16px;
-      font-weight: 600;
-      color: white;
-    }
-
-    .radio-input input[type="radio"] {
-      display: none;
-    }
-
-    .radio-input label {
-      display: flex;
-      align-items: center;
-      padding: 10px;
-      border: 1px solid #ccc;
-      background-color: #212121;
-      border-radius: 5px;
-      margin-right: 12px;
-      cursor: pointer;
-      position: relative;
-      transition: all 0.3s ease-in-out;
-    }
-
-    .radio-input label:before {
-      content: "";
-      display: block;
-      position: absolute;
-      top: 50%;
-      left: 0;
-      transform: translate(-50%, -50%);
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: #fff;
-      border: 2px solid #ccc;
-      transition: all 0.3s ease-in-out;
-    }
-
-    .radio-input input[type="radio"]:checked+label:before {
-      background-color: pink;
-      top: 0;
-    }
-
-    .radio-input input[type="radio"]:checked+label {
-      background-color: purple;
-      color: #fff;
-      border-color: rgb(129, 235, 129);
-      animation: radio-translate 0.5s ease-in-out;
-    }
-
-    @keyframes radio-translate {
-      0% {
-        transform: translateX(0);
-      }
-
-      50% {
-        transform: translateY(-10px);
-      }
-
-      100% {
-        transform: translateX(0);
-      }
-    }
-
-    main,
-    form {
-      margin-top: 0.5em;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 3em;
-    }
-
-    .tarea {
-      background-color: #212121;
-      border-radius: 4px;
-      color: white;
-      font-family: "Courier New", Courier, monospace;
-      border: none;
-      outline: none;
-      overflow: auto;
-      -webkit-box-shadow: none;
-      cursor: text;
-      -moz-box-shadow: none;
-      box-shadow: none;
-      resize: none;
-      padding-left: 1em;
-      padding-top: 1em;
-      transition: border 0.5s;
-    }
-
-    .tarea:hover {
-      border: 1px solid purple;
-    }
-
-
-    button {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 5px;
-      background: #183153;
-      font-family: "Montserrat", sans-serif;
-      box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.2);
-      overflow: hidden;
-      border: none;
-    }
-
-    button:after {
-      content: " ";
-      width: 0%;
-      height: 100%;
-      background: #ffc0cb;
-      position: absolute;
-      transition: all 0.4s ease-in-out;
-      right: 0;
-    }
-
-    button:hover::after {
-      right: auto;
-      left: 0;
-      width: 100%;
-    }
-
-    button span {
-      text-align: center;
-      text-decoration: none;
-      width: 100%;
-      padding: 18px 25px;
-      color: #fff;
-      font-size: 1.125em;
-      font-weight: 700;
-      letter-spacing: 0.3em;
-      z-index: 20;
-      transition: all 0.3s ease-in-out;
-    }
-
-    button:hover span {
-      color: #183153;
-      animation: scaleUp 0.3s ease-in-out;
-    }
-
-    @keyframes scaleUp {
-      0% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(0.95);
-      }
-
-      100% {
-        transform: scale(1);
-      }
-    }
-
-    .colorpick {
-      border-radius: 4px;
-      border: none;
-      width: 10px;
-      position: relative;
-      background-color: #000;
-    }
-  </style>
   <header>
     <div class="gtitle">ASCII ART WEB</div>
   </header>
@@ -240,15 +18,26 @@
       <textarea name="asciiText" placeholder="Insert Text To Be Converted Here (max 1000 charachters)" id="Tinput"
         cols="50" rows="10" class="tarea" required></textarea>
       <div class="radio-input">
-        <input type="color" name="asciiColor" class="colorpick" id="colorpicker">
+        <input type="color" name="asciiColor" class="colorpick" id="colorpicker" style="margin-right: 14px;">
         <input value="standard" name="asciiBanner" id="value-1" type="radio" required />
         <label for="value-1">Standard</label>
         <input value="shadow" name="asciiBanner" id="value-2" type="radio" />
         <label for="value-2">Shadow</label>
         <input value="thinkertoy" name="asciiBanner" id="value-3" type="radio" />
         <label for="value-3">Thinkertoy</label>
+        <a href="String.txt" download="TXT">
+          <button class="Btn">
+            <svg class="svgIcon" viewBox="0 0 384 512" height="1em" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z">
+              </path>
+            </svg>
+            <span class="icon2"></span>
+            <span class="tooltip">Download</span>
+          </button>
+        </a>
       </div>
-      <button type="submit">
+      <button type="submit" class="submitbtn">
         <span>Generate Ascii Art</span>
       </button>
     </form>
