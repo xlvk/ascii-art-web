@@ -1,23 +1,156 @@
 package main
 
-
-
 import (
+	"errors"
+	"fmt"
 	"net/http"
+	"os"
+	"time"
+	"io/ioutil"
 )
 
-func HelloHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "/home/fatabbas/ascii-art-web/projects/httpserver/index.html")
+const serverPort = 2003
+
+
+func HelloHandler1(w http.ResponseWriter, r *http.Request) {
+
+	// Save path links in var.
+	filePath := "/home/fatabbas/ascii-art-web/projects/httpserver/index.html"
+	error404 := "/home/fatabbas/ascii-art-web/projects/httpserver/404Error.html"
+
+	// If the path link not found.
+	_, err := os.Stat(filePath)
+	if os.IsNotExist(err) {
+		http.ServeFile(w, r, error404)
+		return
+	}
+
+	
+	_, err1 := os.Stat(filePath)
+	if os.IsNotExist(err1) {
+		http.ServeFile(w, r, error404)
+		return
+	}
+	http.ServeFile(w, r, filePath)
+
+
+
+	//http.ServeFile(w, r, "/home/fatabbas/ascii-art-web/projects/httpserver/index.html")
 }
 
+// func main() {
+// 	http.HandleFunc("/style.css", func(w http.ResponseWriter, r *http.Request) {
+// 		http.ServeFile(w, r, "/home/fatabbas/ascii-art-web/projects/httpserver/style.css")
+// 	})
+// 	http.HandleFunc("/", HelloHandler)
+// 	http.ListenAndServe(":2003", nil)
+// 	requestURL := fmt.Sprintf("http://localhost:%d", serverPort)
+// 	req, err := http.NewRequest(http.MethodGet, requestURL, nil)
+// 	if err != nil {
+// 		fmt.Printf("client: could not create request: %s\n", err)
+// 		os.Exit(1)
+// 	}
+
+// 	res, err := http.DefaultClient.Do(req)
+// 	if err != nil {
+// 		fmt.Printf("client: error making http request: %s\n", err)
+// 		os.Exit(1)
+// 	}
+
+// 	fmt.Printf("client: got response!\n")
+// 	fmt.Printf("client: status code: %d\n", res.StatusCode)
+
+// 	resBody, err := ioutil.ReadAll(res.Body)
+// 	if err != nil {
+// 		fmt.Printf("client: could not read response body: %s\n", err)
+// 		os.Exit(1)
+// 	}
+// 	fmt.Printf("client: response body: %s\n", resBody)
+// 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+// 		fmt.Printf("server: %s /\n", r.Method)
+// 		fmt.Fprintf(w, `{"message": "hello!"}`)
+// 	})
+// }
+
 func main() {
-	// if 
-	http.HandleFunc("/style.css", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "/home/fatabbas/ascii-art-web/projects/httpserver/style.css")
-	})
-	http.HandleFunc("/", HelloHandler)
-	http.ListenAndServe(":2003", nil)
+	go func() {
+		mux := http.NewServeMux()
+		mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			fmt.Printf("server: %s /\n", r.Method)
+		})
+		server := http.Server{
+			Addr:    fmt.Sprintf(":%d", serverPort),
+			Handler: mux,
+		}
+		if err := server.ListenAndServe(); err != nil {
+			if !errors.Is(err, http.ErrServerClosed) {
+				fmt.Printf("error running http server: %s\n", err)
+			}
+		}
+	}()
+
+	time.Sleep(100 * time.Millisecond)
+	requestURL := fmt.Sprintf("http://localhost:%d", serverPort)
+	req, err := http.NewRequest(http.MethodGet, requestURL, nil)
+	if err != nil {
+		fmt.Printf("client: could not create request: %s\n", err)
+		os.Exit(1)
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Printf("error making http request: %s\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("client: got response!\n")
+	fmt.Printf("client: status code: %d\n", res.StatusCode)
+
+	resBody, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Printf("client: could not read response body: %s\n", err)
+		os.Exit(1)
+	}
+	fmt.Printf("client: response body: %s\n", resBody)
 }
+
+
+func HelloHandler(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "/projects/httpserver/index.html")
+}
+
+
+
+// Example of parsing HTML and extracting data using goquery
+// package main
+
+// import (
+// 	"fmt"
+// 	"github.com/PuerkitoBio/goquery" // Import goquery package
+// 	"log"
+// 	"net/http"
+// )
+
+// func main() {
+// 	url := "https://example.com" // Replace with your desired URL
+// 	response, err := http.Get(url)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	defer response.Body.Close()
+
+// 	// Parse the HTML
+// 	doc, err := goquery.NewDocumentFromReader(response.Body)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	// Use Find to extract specific data
+// 	doc.Find("h1").Each(func(index int, element *goquery.Selection) {
+// 		fmt.Println("Title:", element.Text())
+// 	})
+// }
+
 
 // import (
 // 	"asciiArtWeb"
