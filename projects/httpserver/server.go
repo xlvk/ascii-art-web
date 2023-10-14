@@ -103,7 +103,7 @@ func processor(w http.ResponseWriter, r *http.Request) {
 	ress := StrArr(argsArr, arr)
 	nn := ""
 	for i := 0; i < len(ress); i++ {
-		if ress[i] == "" {
+		if ress[i] != "" {
 			nn = nn + ress[i] + "\n"
 		} else {
 			nn = nn + "\n"
@@ -112,12 +112,18 @@ func processor(w http.ResponseWriter, r *http.Request) {
 	}
 	// fmt.Println(nn)
 	d := struct{
-		result string
+		Result string
 		// Banner string
 	}{
-		result: nn,
+		Result: nn,
 	}
-	sere.ExecuteTemplate(w, "template/processor.html", d)
+	fmt.Println(d.Result)
+	tmp, _ := template.ParseFiles("template/processor.html")
+	// if err != nil {
+
+	// }
+	tmp.Execute(w, d)
+	// sere.ExecuteTemplate(w, "template/processor.html", d)
 }
 
 func ErrorPage(w http.ResponseWriter) {

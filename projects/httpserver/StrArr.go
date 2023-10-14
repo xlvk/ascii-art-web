@@ -25,7 +25,7 @@ func StrArr(banners, arr []string) []string {
 		if ch == "" {
 			if num < len(banners) {
 				if word != "" {
-					fmt.Println(word)
+					fmt.Println(word, 0)
 					ReturnArr = append(ReturnArr, word)
 					word = ""
 				} else {
@@ -39,14 +39,14 @@ func StrArr(banners, arr []string) []string {
 			}
 		}
 		for i := 0; i < 8; i++ {
-			word = ""
+			
 			for _, j := range ch {
-				n := (j-32)*9 + 1
-				word = word + arr[int(n)+1]
-				fmt.Println(word)
-				// fmt.Print(arr[int(n)+i])
+				n := '0'
+				n = (j-32)*9 + 1
+				// word = ""
+				word = word + arr[int(n)+i]
+				// fmt.Print(word)
 				fmt.Fprint(writer, arr[int(n)+i])
-
 			}
 			ReturnArr = append(ReturnArr, word)
 			word = ""
@@ -55,15 +55,5 @@ func StrArr(banners, arr []string) []string {
 		}
 	}
 	writer.Flush()
-	// fmt.Println(ReturnArr)
-	// nn := ""
-	// for i := 0; i < len(ReturnArr); i++ {
-	// 	if ReturnArr[i] == "" {
-	// 		nn = nn + ReturnArr[i] + "\n"
-	// 	} else {
-	// 		nn = nn + "\n"
-	// 	}
-	// 	fmt.Println(ReturnArr[i], len(ReturnArr))
-	// }
 	return ReturnArr
 }
