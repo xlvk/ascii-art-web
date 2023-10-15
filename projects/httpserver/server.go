@@ -45,16 +45,20 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			// w.Write([]byte("This is the main content."))
 			sere.ExecuteTemplate(w, "index.html", nil)
 			return
-			} else  if r.URL.Path != "/ascii-art" {
-				http.ServeFile(w, r, "template/400Error.html")
-			
-		} else  if r.URL.Path != "/StrFile.txt" {
+		} else if r.URL.Path != "/ascii-art" {
+			w.WriteHeader(http.StatusBadRequest)
+			http.ServeFile(w, r, "template/400Error.html")
+
+		} else if r.URL.Path != "/StrFile.txt" {
+			w.WriteHeader(http.StatusNotFound)
 			http.ServeFile(w, r, "template/404Error.html")
+
 		}
 
 	} else {
-		http.ServeFile(w, r, "template/405Error.html")
 		w.WriteHeader(http.StatusMethodNotAllowed)
+		http.ServeFile(w, r, "template/405Error.html")
+
 	}
 
 	// _, err1 := os.Stat(filePath)
@@ -84,25 +88,28 @@ func main() {
 
 func processor(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
-		if r.URL.Path != "/" && r.URL.Path != "/StrFile.txt" && r.URL.Path != "/ascii-art"{
+		if r.URL.Path != "/" && r.URL.Path != "/StrFile.txt" && r.URL.Path != "/ascii-art" {
 
 			// tmp, _ := template.ParseFiles("template/404Error.html")
 			// tmp.Execute(w, nil)
-			http.ServeFile(w, r, "template/404Error.html")
 			w.WriteHeader(http.StatusNotFound)
+			http.ServeFile(w, r, "template/404Error.html")
+
 		}
-		http.ServeFile(w, r, "template/405Error.html")
 		w.WriteHeader(http.StatusMethodNotAllowed)
+		http.ServeFile(w, r, "template/405Error.html")
+
 		return
-// 	} else  if r.URL.Path != "/ascii-art" {
-// 		http.ServeFile(w, r, "template/400Error.html")
-	
-}
+		// 	} else  if r.URL.Path != "/ascii-art" {
+		// 		http.ServeFile(w, r, "template/400Error.html")
+
+	}
 	font := r.FormValue("asciiBanner")
 	text := r.FormValue("asciiText")
 	if len(text) >= 255 {
-		http.ServeFile(w, r, "template/400Error.html")
 		w.WriteHeader(http.StatusBadRequest)
+		http.ServeFile(w, r, "template/400Error.html")
+
 	}
 	// ress := Str()
 	// Read the content of the file
@@ -113,9 +120,10 @@ func processor(w http.ResponseWriter, r *http.Request) {
 		word := argsArr[i]
 		word = word[:len(word)-1]
 		if !IsValid(word) {
-			fmt.Println(argsArr[i])
-			http.ServeFile(w, r, "template/400Error.html")
+			// fmt.Println(argsArr[i])
 			w.WriteHeader(http.StatusBadRequest)
+			http.ServeFile(w, r, "template/400Error.html")
+
 		}
 	}
 	arr := []string{}
@@ -124,8 +132,9 @@ func processor(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		// ErrorPage(w)
-		http.ServeFile(w, r, "template/500Error.html")
 		w.WriteHeader(http.StatusInternalServerError)
+		http.ServeFile(w, r, "template/500Error.html")
+
 		// log.Fatalf("failed to open file: %s", err)
 	}
 
@@ -173,8 +182,9 @@ func processor(w http.ResponseWriter, r *http.Request) {
 	for i := 0; i < len(f); i++ {
 		if f[i] != "" {
 			if !IsValid(f[i]) {
-				http.ServeFile(w, r, "template/400Error.html")
 				w.WriteHeader(http.StatusBadRequest)
+				http.ServeFile(w, r, "template/400Error.html")
+
 			}
 		}
 
@@ -193,7 +203,7 @@ func processor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.HandleFunc("/StrFile.txt", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w,r,"template/StrFile.txt")
+		http.ServeFile(w, r, "template/StrFile.txt")
 	})
 
 	// fmt.Println(nn)
@@ -213,12 +223,13 @@ func processor(w http.ResponseWriter, r *http.Request) {
 }
 
 func ErrorPage(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusInternalServerError)
 	template.Must(template.ParseGlob("template/500Error.html"))
 	sere.ExecuteTemplate(w, "template/500Error.html", nil)
 }
 func DownLoad(w http.ResponseWriter, r *http.Request) {
-	
-	http.ServeFile(w,r,"template/StrFile.txt")
+
+	http.ServeFile(w, r, "template/StrFile.txt")
 }
 
 // func main() {
