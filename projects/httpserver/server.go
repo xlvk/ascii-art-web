@@ -45,6 +45,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			// w.Write([]byte("This is the main content."))
 			sere.ExecuteTemplate(w, "index.html", nil)
 			return
+			} else  if r.URL.Path != "/ascii-art" {
+				http.ServeFile(w, r, "template/400Error.html")
+			
 		} else  if r.URL.Path != "/StrFile.txt" {
 			http.ServeFile(w, r, "template/404Error.html")
 		}
@@ -81,7 +84,7 @@ func main() {
 
 func processor(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
-		if r.URL.Path != "/" && r.URL.Path != "/StrFile.txt" {
+		if r.URL.Path != "/" && r.URL.Path != "/StrFile.txt" && r.URL.Path != "/ascii-art"{
 
 			// tmp, _ := template.ParseFiles("template/404Error.html")
 			// tmp.Execute(w, nil)
@@ -91,7 +94,10 @@ func processor(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "template/405Error.html")
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
-	}
+// 	} else  if r.URL.Path != "/ascii-art" {
+// 		http.ServeFile(w, r, "template/400Error.html")
+	
+}
 	font := r.FormValue("asciiBanner")
 	text := r.FormValue("asciiText")
 	if len(text) >= 255 {
