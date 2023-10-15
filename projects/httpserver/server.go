@@ -192,9 +192,9 @@ func processor(w http.ResponseWriter, r *http.Request) {
 		// fmt.Println(ress[i])
 	}
 
-	// http.HandleFunc("/StrFile.txt", func(w http.ResponseWriter, r *http.Request) {
-	// 	http.ServeFile(w,r,"template/StrFile.txt")
-	// })
+	http.HandleFunc("/StrFile.txt", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w,r,"template/StrFile.txt")
+	})
 
 	// fmt.Println(nn)
 	d := struct {
@@ -215,6 +215,10 @@ func processor(w http.ResponseWriter, r *http.Request) {
 func ErrorPage(w http.ResponseWriter) {
 	template.Must(template.ParseGlob("template/500Error.html"))
 	sere.ExecuteTemplate(w, "template/500Error.html", nil)
+}
+func DownLoad(w http.ResponseWriter, r *http.Request) {
+	
+	http.ServeFile(w,r,"template/StrFile.txt")
 }
 
 // func main() {
