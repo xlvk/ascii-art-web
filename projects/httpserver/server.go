@@ -45,7 +45,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			// w.Write([]byte("This is the main content."))
 			sere.ExecuteTemplate(w, "index.html", nil)
 			return
-		} else {
+		} else  if r.URL.Path != "/StrFile.txt" {
 			http.ServeFile(w, r, "template/404Error.html")
 		}
 
@@ -75,12 +75,13 @@ func main() {
 	}
 	fmt.Print("Listening and serving on: ")
 	fmt.Printf("%+v", u)
+	fmt.Println()
 	http.ListenAndServe(":2003", nil)
 }
 
 func processor(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
-		if r.URL.Path != "/" {
+		if r.URL.Path != "/" && r.URL.Path != "/StrFile.txt" {
 
 			// tmp, _ := template.ParseFiles("template/404Error.html")
 			// tmp.Execute(w, nil)
@@ -97,15 +98,20 @@ func processor(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "template/400Error.html")
 		w.WriteHeader(http.StatusBadRequest)
 	}
-	if !IsValid(text) {
-		http.ServeFile(w, r, "template/400Error.html")
-		w.WriteHeader(http.StatusBadRequest)
-	}
 	// ress := Str()
 	// Read the content of the file
 	// fmt.Println(text)
 	text = strings.ReplaceAll(text, "\\t", "   ")
 	argsArr := strings.Split(strings.ReplaceAll(text, "\\n", "\n"), "\n")
+	for i := 0; i < len(argsArr); i++ {
+		word := argsArr[i]
+		word = word[:len(word)-1]
+		if !IsValid(word) {
+			fmt.Println(argsArr[i])
+			http.ServeFile(w, r, "template/400Error.html")
+			w.WriteHeader(http.StatusBadRequest)
+		}
+	}
 	arr := []string{}
 	readFile, err := os.Open("fonts/" + font + ".txt")
 	defer readFile.Close()
@@ -129,13 +135,45 @@ func processor(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	larg := len(argsArr)
+
 	if larg >= 2 {
 		if argsArr[larg-1] == "" && argsArr[larg-2] != "" {
 			argsArr = argsArr[:larg-1]
 		}
 	}
+	// for i:=0; i <len(argsArr); i++ {
+	var f []string
+	// check := false
+	wee := ""
+	for _, arg := range argsArr {
+		for _, arg2 := range arg {
+			if arg2 == 13 {
+				// check = true
+			} else {
 
-	ress := StrArr(argsArr, arr)
+				wee += string(arg2)
+			}
+		}
+		// if check {
+		// 	f = append(f, "")
+		// } else {
+		f = append(f, wee)
+		// }
+		// check = false
+		wee = ""
+		// fmt.Println(f)
+	}
+	// fmt.Println(f)
+	for i := 0; i < len(f); i++ {
+		if f[i] != "" {
+			if !IsValid(f[i]) {
+				http.ServeFile(w, r, "template/400Error.html")
+				w.WriteHeader(http.StatusBadRequest)
+			}
+		}
+
+	}
+	ress := StrArr(f, arr)
 	ress = Check(ress)
 	// if ress
 	nn := ""
