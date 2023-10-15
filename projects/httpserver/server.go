@@ -7,10 +7,12 @@ import (
 	// "io/ioutil"
 	// "log"
 	"bufio"
+	"html/template"
 	"net/http"
 	"os"
-	"html/template"
+
 	// "time"
+	"net/url"
 	"strings"
 )
 
@@ -38,9 +40,20 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	// 	http.ServeFile(w, r, error404)
 	// 	return
 	// }
-	
-	sere.ExecuteTemplate(w, "index.html", nil)
-	
+	if r.Method == "GET" {
+		if r.URL.Path == "/" {
+			// w.Write([]byte("This is the main content."))
+			sere.ExecuteTemplate(w, "index.html", nil)
+			return
+		} else {
+			http.ServeFile(w, r, "template/404Error.html")
+		}
+
+	} else {
+		http.ServeFile(w, r, "template/405Error.html")
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+
 	// _, err1 := os.Stat(filePath)
 	// if os.IsNotExist(err1) {
 	// 	http.ServeFile(w, r, error404)
@@ -49,8 +62,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	// http.ServeFile(w, r, filePath)
 	// http.ServeFile(w, r, "/projects/httpserver/index.html")
 
-
-
 	//http.ServeFile(w, r, "/home/fatabbas/ascii-art-web/projects/httpserver/index.html")
 }
 
@@ -58,19 +69,41 @@ func main() {
 	http.HandleFunc("/", Index)
 	http.Handle("/template/css/", http.StripPrefix("/template/css/", http.FileServer(http.Dir("css/"))))
 	http.HandleFunc("/ascii-art", processor)
+	u, err := url.Parse("http://localhost:2003")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Print("Listening and serving on: ")
+	fmt.Printf("%+v", u)
 	http.ListenAndServe(":2003", nil)
 }
 
 func processor(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		if r.URL.Path != "/" {
+
+			// tmp, _ := template.ParseFiles("template/404Error.html")
+			// tmp.Execute(w, nil)
+			http.ServeFile(w, r, "template/404Error.html")
+			w.WriteHeader(http.StatusNotFound)
+		}
+		http.ServeFile(w, r, "template/405Error.html")
+		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 	font := r.FormValue("asciiBanner")
 	text := r.FormValue("asciiText")
-
+	if len(text) >= 255 {
+		http.ServeFile(w, r, "template/400Error.html")
+		w.WriteHeader(http.StatusBadRequest)
+	}
+	if !IsValid(text) {
+		http.ServeFile(w, r, "template/400Error.html")
+		w.WriteHeader(http.StatusBadRequest)
+	}
 	// ress := Str()
 	// Read the content of the file
+	// fmt.Println(text)
 	text = strings.ReplaceAll(text, "\\t", "   ")
 	argsArr := strings.Split(strings.ReplaceAll(text, "\\n", "\n"), "\n")
 	arr := []string{}
@@ -78,7 +111,9 @@ func processor(w http.ResponseWriter, r *http.Request) {
 	defer readFile.Close()
 
 	if err != nil {
-		ErrorPage(w)
+		// ErrorPage(w)
+		http.ServeFile(w, r, "template/500Error.html")
+		w.WriteHeader(http.StatusInternalServerError)
 		// log.Fatalf("failed to open file: %s", err)
 	}
 
@@ -101,6 +136,8 @@ func processor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ress := StrArr(argsArr, arr)
+	ress = Check(ress)
+	// if ress
 	nn := ""
 	for i := 0; i < len(ress); i++ {
 		if ress[i] != "" {
@@ -110,14 +147,19 @@ func processor(w http.ResponseWriter, r *http.Request) {
 		}
 		// fmt.Println(ress[i])
 	}
+
+	// http.HandleFunc("/StrFile.txt", func(w http.ResponseWriter, r *http.Request) {
+	// 	http.ServeFile(w,r,"template/StrFile.txt")
+	// })
+
 	// fmt.Println(nn)
-	d := struct{
+	d := struct {
 		Result string
 		// Banner string
 	}{
 		Result: nn,
 	}
-	fmt.Println(d.Result)
+	// fmt.Println(d.Result)
 	tmp, _ := template.ParseFiles("template/processor.html")
 	// if err != nil {
 
@@ -166,43 +208,43 @@ func ErrorPage(w http.ResponseWriter) {
 // }
 
 // func main() {
-	// go func() {
-	// 	mux := http.NewServeMux()
-	// 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-	// 		fmt.Printf("server: %s /\n", r.Method)
-	// 	})
-	// 	server := http.Server{
-	// 		Addr:    fmt.Sprintf(":%d", serverPort),
-	// 		Handler: mux,
-	// 	}
-	// 	if err := server.ListenAndServe(); err != nil {
-	// 		if !errors.Is(err, http.ErrServerClosed) {
-	// 			fmt.Printf("error running http server: %s\n", err)
-	// 		}
-	// 	}
-	// }()
+// go func() {
+// 	mux := http.NewServeMux()
+// 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+// 		fmt.Printf("server: %s /\n", r.Method)
+// 	})
+// 	server := http.Server{
+// 		Addr:    fmt.Sprintf(":%d", serverPort),
+// 		Handler: mux,
+// 	}
+// 	if err := server.ListenAndServe(); err != nil {
+// 		if !errors.Is(err, http.ErrServerClosed) {
+// 			fmt.Printf("error running http server: %s\n", err)
+// 		}
+// 	}
+// }()
 
-	// time.Sleep(100 * time.Millisecond)
-	// requestURL := fmt.Sprintf("http://localhost:%d", serverPort)
-	// req, err := http.NewRequest(http.MethodGet, requestURL, nil)
-	// if err != nil {
-	// 	fmt.Printf("client: could not create request: %s\n", err)
-	// 	os.Exit(1)
-	// }
+// time.Sleep(100 * time.Millisecond)
+// requestURL := fmt.Sprintf("http://localhost:%d", serverPort)
+// req, err := http.NewRequest(http.MethodGet, requestURL, nil)
+// if err != nil {
+// 	fmt.Printf("client: could not create request: %s\n", err)
+// 	os.Exit(1)
+// }
 
-	// res, err := http.DefaultClient.Do(req)
-	// if err != nil {
-	// 	fmt.Printf("error making http request: %s\n", err)
-	// 	os.Exit(1)
-	// }
+// res, err := http.DefaultClient.Do(req)
+// if err != nil {
+// 	fmt.Printf("error making http request: %s\n", err)
+// 	os.Exit(1)
+// }
 
-	// fmt.Printf("client: got response!\n")
-	// fmt.Printf("client: status code: %d\n", res.StatusCode)
+// fmt.Printf("client: got response!\n")
+// fmt.Printf("client: status code: %d\n", res.StatusCode)
 
-	// resBody, err := ioutil.ReadAll(res.Body)
-	// if err != nil {
-	// 	fmt.Printf("client: could not read response body: %s\n", err)
-	// 	os.Exit(1)
-	// }
-	// fmt.Printf("client: response body: %s\n", resBody)
+// resBody, err := ioutil.ReadAll(res.Body)
+// if err != nil {
+// 	fmt.Printf("client: could not read response body: %s\n", err)
+// 	os.Exit(1)
+// }
+// fmt.Printf("client: response body: %s\n", resBody)
 // }

@@ -1,4 +1,4 @@
-package asciiArtColor
+package main
 
 // Check for valid of characters by runes from 32 to 126
 func IsValid(s string) bool {
