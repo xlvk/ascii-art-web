@@ -1,0 +1,14 @@
+FROM golang:1.19
+
+LABEL Authers = "Fatima Abbas, Ebrahim"
+LABEL Name = "ascii-art-web-dockerize"
+
+WORKDIR /ascii-art-web/projects/httpserver
+
+COPY . .
+
+RUN go build -o /go-ascii-art-web 
+
+EXPOSE 2003
+
+CMD ["/go-ascii-art-web"]
