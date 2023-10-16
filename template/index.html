@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- <link rel="stylesheet" type="text/css" href="style.css" /> -->
     <link type="text/css" rel="stylesheet" href="css/style.css" />
-    <title>WEB ART</title>
+    <title>ascii-art-web</title>
   </head>
 
   <body>
     <header>
-      <div class="gtitle">ASCII ART WEB</div>
+      <div class="gtitle">ASCII-ART-WEB</div>
       <style>
         @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@100&display=swap");
 
@@ -20,7 +20,7 @@
         }
 
         body {
-          background-color: #111;
+          background-color: #030005;
         }
 
         body::-webkit-scrollbar {
@@ -33,7 +33,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          background-color: #111;
+          background-color: #030005;
         }
 
         .gtitle {
@@ -227,13 +227,25 @@
           }
         }
 
-        .colorpick {
-          border-radius: 90%;
+        #colorpicker{
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          appearance: none;
+          background-color: transparent;
+          width: 50px;
+          height: 50px;
           border: none;
-          width: 40px;
-          height: 40px;
-          position: relative;
-          background-color: #000;
+          cursor: pointer;
+        }
+
+        #colorpicker::-webkit-color-swatch{
+          border-radius: 50%;
+          border: 5px solid rgb(28, 27, 27);
+        }
+
+        #colorpicker::-moz-color-swatch{
+          border-radius: 50%;
+          border: 5px solid rgb(28, 27, 27);
         }
 
         .Btn {
@@ -363,33 +375,11 @@
             type="radio"
           />
           <label for="value-3">Thinkertoy</label>
-          <a href="StrFile.txt" download="TXT">
-            <button class="Btn">
-              <svg
-                class="svgIcon"
-                viewBox="0 0 384 512"
-                height="1em"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"
-                ></path>
-              </svg>
-              <span class="icon2"></span>
-              <span class="tooltip">Download</span>
-            </button>
-          </a>
         </div>
         <button type="submit" class="submitbtn">
           <span>Generate Ascii Art</span>
         </button>
       </form>
     </main>
-    <!-- <section>
-    <form action="/process" method="post">
-
-
-    </form>
-  </section> -->
   </body>
 </html>

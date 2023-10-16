@@ -6,6 +6,12 @@
     <!-- <link rel="stylesheet" type="text/css" href="style.css" /> -->
     <link type="text/css" rel="stylesheet" href="css/ErrorsStyle.css" />
     <style>
+      body::-webkit-scrollbar {
+        display: none;
+      }
+      body {
+        height: 100%;
+      }
       .Homepage {
         font-family: "Montserrat", sans-serif;
         display: inline-block;
@@ -116,58 +122,58 @@
         animation: slide-in-top 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
       }
 
+      .wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
       .ForBu {
+        margin-top: 5em;
         display: flex;
         align-items: center;
         flex-direction: row;
-        /* font-family: 'IBM Plex Mono', monospace, sans-serif; */
-        /* font-size: 16px; */
-        /* font-weight: 600; */
-        /* color: white; */
+        gap: 5em;
       }
 
       .haha {
+        margin-top: 10em;
+        overflow-y: auto;
+        max-height: 40vh;
+        overflow-x: auto;
+        max-width: 70vw;
         display: flex;
         align-items: center;
         padding: 10px;
-        border: 1px solid #ccc;
+        border: 0;
         background-color: #212121;
         border-radius: 5px;
         margin-right: 12px;
         cursor: pointer;
         position: relative;
         transition: all 0.3s ease-in-out;
+        width: 70vw;
+        height: 40vh;
       }
 
       .haha:hover {
         border: 1px solid #8400ff;
       }
-
-      /* @keyframes slide-in-top {
-      0% {
-        transform: translateY(-10px);
-        opacity: 0;
-      }
-
-      100% {
-        transform: translateY(0px);
-        opacity: 1;
-      }
-    } */
-
-      /* h3 {
-
-    } */
     </style>
     <title>Result</title>
   </head>
 
   <body>
-    <div>
+    <div class="wrapper">
       <div class="ForBu">
         <a class="Homepage" href="/">Homepage</a>
-        <a href="/StrFile.txt" download="StrFile.txt">
-          <button class="Btn" style="margin-left: 15px" >
+        <a>
+          <button
+            class="Btn"
+            style="margin-left: 15px"
+            onclick="downloadFile()"
+          >
             <svg
               class="svgIcon"
               viewBox="0 0 384 512"
@@ -180,13 +186,34 @@
             </svg>
 
             <span class="icon2"></span>
-            <form action="/download" method="POST">
-            <input type="hidden" name="hakuna"  value="{{.Result}}">
+            <input type="hidden" name="hakuna" value="{{.Result}}" />
             <span class="tooltip" download="result.txt">Download</span>
           </button>
         </a>
       </div>
       <pre style="color: #ffffff" class="haha">{{.Result}}</pre>
     </div>
+    <script>
+      function downloadFile() {
+        // Send a GET request to the "/download" endpoint
+        fetch("/download")
+          .then((response) => response.blob())
+          .then((blob) => {
+            var link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+
+            link.download = "textAscii.txt";
+
+            document.body.appendChild(link);
+
+            link.click();
+
+            document.body.removeChild(link);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+    </script>
   </body>
 </html>
