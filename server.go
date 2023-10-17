@@ -107,6 +107,8 @@ func processor(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(arr) != fileLen {
+		w.WriteHeader(http.StatusInternalServerError)
+		http.ServeFile(w, r, "template/500Error.html")
 		fmt.Println("File is corrupted.")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
