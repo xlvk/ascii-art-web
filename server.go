@@ -24,7 +24,8 @@ func init() {
 
 func main() {
 	http.HandleFunc("/", Index)
-	http.Handle("/template/css/", http.StripPrefix("/template/css/", http.FileServer(http.Dir("css/"))))
+	http.HandleFunc("/template/css/style.css", Style)
+	http.HandleFunc("/template/css/ErrorsStyle.css", StyleError)
 	http.HandleFunc("/ascii-art", processor)
 	http.HandleFunc("/download", DownLoad)
 	u, err := url.Parse("http://localhost:2003")
@@ -43,32 +44,30 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			sere.ExecuteTemplate(w, "index.html", nil)
 			return
 		} else {
-			// w.Header().Set("Content-Type", "html/text")
 			w.WriteHeader(http.StatusNotFound)
 			http.ServeFile(w, r, "template/404Error.html")
 		}
 	} else {
-		// w.Header().Set("Content-Type", "html/text")
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		http.ServeFile(w, r, "template/405Error.html")
 	}
+
 }
 
 func processor(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		if r.URL.Path != "/" && r.URL.Path != "/StrFile.txt" && r.URL.Path != "/ascii-art" {
-			// w.Header().Set("Content-Type", "html/text")
 			w.WriteHeader(http.StatusNotFound)
 			http.ServeFile(w, r, "template/404Error.html")
 		}
-		w.Header().Set("Content-Type", "text/html")
+		// w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		http.ServeFile(w, r, "template/405Error.html")
 	}
 	font := r.FormValue("asciiBanner")
 	text := r.FormValue("asciiText")
 	if len(text) >= 1000 {
-		w.Header().Set("Content-Type", "text/html")
+		// w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusBadRequest)
 		http.ServeFile(w, r, "template/400Error.html")
 		return
@@ -79,11 +78,10 @@ func processor(w http.ResponseWriter, r *http.Request) {
 		word := argsArr[i]
 		if argsArr[i] != "" {
 			// continue
-			
-		word = word[:len(word)-1]
+
+			word = word[:len(word)-1]
 		}
 		if !IsValid(word) {
-			// w.Header().Set("Content-Type", "html/text")
 			w.WriteHeader(http.StatusBadRequest)
 			http.ServeFile(w, r, "template/400Error.html")
 			return
@@ -97,7 +95,6 @@ func processor(w http.ResponseWriter, r *http.Request) {
 	defer readFile.Close()
 
 	if err != nil {
-		// w.Header().Set("Content-Type", "html/text")
 		w.WriteHeader(http.StatusInternalServerError)
 		http.ServeFile(w, r, "template/500Error.html")
 	}
@@ -137,7 +134,6 @@ func processor(w http.ResponseWriter, r *http.Request) {
 	for i := 0; i < len(f); i++ {
 		if f[i] != "" {
 			if !IsValid(f[i]) {
-				// w.Header().Set("Content-Type", "html/text")
 				w.WriteHeader(http.StatusBadRequest)
 				http.ServeFile(w, r, "template/400Error.html")
 				return
@@ -165,6 +161,14 @@ func processor(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func Style(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "template/css/style.css")
+}
+
+func StyleError(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "/template/css/ErrorsStyle.css")
+}
+
 func ErrorPage(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusInternalServerError)
 	template.Must(template.ParseGlob("template/500Error.html"))
@@ -188,7 +192,6 @@ func DownLoad(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, fmt.Sprintf("Failed to write file to response: %s", err.Error()), http.StatusInternalServerError)
 		}
 	} else {
-		// w.Header().Set("Content-Type", "html/text")
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		http.ServeFile(w, r, "template/405Error.html")
 	}
